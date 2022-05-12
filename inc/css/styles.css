@@ -1,0 +1,356 @@
+/******************************
+/*General Setting
+*******************************/
+body { font-family:Arial;background-color:#FAFAFF;}
+img {border:none; }
+
+h1 { color:#000; font-size:28px; }
+h2 { color:#000; font-size:18px; font-weight: bold; margin-bottom:10px;margin-top:5px; }
+h3 { color:#000; font-size:12pt; }
+h4 { color:#000; font-size:12pt; }
+
+
+#query_edit
+{
+	display:none;
+	margin-left:2vw;
+	max-width:90vw;
+	margin-top:0px;
+	position:absolute;
+	padding:10px;
+	background-color:#FFF;
+	border-radius:15px;
+	border:5px solid #CCC;
+	overflow:auto;
+}
+
+#edit_message
+{
+	display:none;
+	margin-left:2vw;
+	width:96vw;
+	text-align:center;
+	margin-top:0px;
+	position:fixed;
+	padding:10px;
+	overflow:auto;
+	max-height:500px;
+	z-index:100;
+	top:300px;
+}
+
+
+img.court { width:100%; }
+
+h1.wins { margin-left:10px;font-size:14pt; }
+img.wuefel { display:block;margin:auto;  }
+
+button:hover { color: black; }
+button:focus {outline:0;}
+
+div#menu { display:table-cell; border-bottom:3px solid #CCC; }
+
+
+div.menu_item
+{
+	float:left;
+	padding-left:5px;
+}
+div.result { text-align:center; }
+
+div.siege { font-size:14pt;padding-bottom:10px; }
+div.user_mit_BHZ { float:left;font-size:10pt;text-align:center;margin-bottom:5px;cursor:pointer; }
+div.user_mit_name { float:left;font-size:9pt;text-align:center;margin-bottom:5px;cursor:pointer; }
+
+
+/******************************/
+
+div.alert { text-decoration:none;display:block;width:97%;background-color:yellow;border:1px solid black;border-radius:10px;padding:10px;font-size:12pt;margin-top:10px;margin-bottom:10px; }
+
+div.page { width:100%;margin:0 auto; }
+div.header { position:relative; }
+div.content { width:100%; }
+div.footer { clear:both;}
+div.menu {height:50px; text-align:left;}
+
+/*Definition zu den Auflistungen*/
+tr.liste_1 { font-size:9pt;background-color:#EEEEFF;}  /*Der Text innerhalb der Liste*/
+tr.liste_2 { font-size:9pt;background-color:#CCCCDD;}  /*Der Text innerhalb der Liste*/
+td.liste_link_1 { font-size:11pt;color:darkblue;text-decoration:none;cursor:pointer;background-color:#EEEEFF;} /*Simuliert einen Link (für Javascripts)*/
+td.liste_link_2 { font-size:11pt;color:darkblue;text-decoration:none;cursor:pointer;background-color:#CCCCDD;} /*Simuliert einen Link (für Javascripts)*/
+td { text-align:left; font-size:10pt; }  /*Die Überschriften der Liste*/
+
+td.liste_1 a { font-size:9pt;} /*Alle Links, die in einer Zelle von der Klasse "Liste" sind*/
+td.liste_2 a { font-size:9pt;} /*Alle Links, die in einer Zelle von der Klasse "Liste" sind*/
+
+/*Link-Definitionen*/
+A:link { color: #0000EE; font-weight: normal; font-style: normal; text-decoration: none; color:darkblue; }
+A:visited {  color:darkblue; }
+A:hover { color: #000000; text-decoration: underline; }
+
+A.sort_link:link { color:black;font-weight:bold; }
+A.sort_link:visited { color:black;font-weight:bold; }
+A.sort_link:active { color:black;font-weight:bold; }
+A.sort_link:hover { color:black;text-decoration:underline;font-weight:bold; }
+
+a.ja { font-size:20pt;color:green;text-decoration:none;}
+a.ja:visited { font-size:20pt;color:green;text-decoration:none;}
+a.ja:hover { font-size:20pt;color:green;text-decoration:underline;}
+
+a.nein { font-size:20pt;color:red;text-decoration:none;}
+a.nein:visited { font-size:20pt;color:red;text-decoration:none;}
+a.nein:hover { font-size:20pt;color:red;text-decoration:underline;}
+
+td.link { font-size:11pt;color:blue;text-decoration:none;cursor:pointer;} /*Simuliert einen Link (für Javascripts)*/
+td.u_input { font-size:9pt;font-weight:bold;font-style:italic;} /*Alle Überschriften zu den Inputfeldern*/
+td.u_select { font-size:10pt; font-weight:bold;} /*Überschrift zu alles Select's*/
+
+td.edit { font-size:12pt;font-weight:normal;border:1px dotted #BBBBBB; } /*Bearbeitungsfelder, die nur als Text angezeigt werden, weil Sie als nicht editierbar deklariert sind*/
+td.frage { font-size:14pt; }
+td.tblinfos { font-size:12pt; color:gray; font-weight:bold; } /*Informationen zur Tabelle (Anzahl Datensätze, ...)*/
+
+td.main_info { text-align:right; padding-top:10px;font-size:18pt;font-weight:bold; } /*Info oben rechts von jeder Seite*/
+
+td.u3 { padding-bottom:10px;padding-top:10px;font-size:14pt;font-style:italic;color:black;}
+td.u4 { font-size:8pt; font-weight:bold;}
+
+td.info { font-size:11pt;color:darkblue;} /*Alle Informationstexte für den user*/
+td.changed { color:red; } /*Beim der Antragdarstellung werden geänderte Daten so dargestellt*/
+span.fehler { font-size:14pt;color:red;} /*Formatierung für alles Fehleranzeigen*/
+span.htext {font-size:14pt;} /*Für Text, der gut lesbar und genug gross sein soll*/
+span.link { font-size:11pt;color:black;text-decoration:none;cursor:pointer;} /*Simuliert einen Link (für Javascripts)*/
+
+form {margin:0px;}
+
+div.podest
+{
+	float:left;
+	position:relative;
+	width:100%;
+}
+
+div.not_podest
+{
+	clear:both;
+	width:100%;
+}
+
+
+#my_view { float:left;width:30%;max-width:300px; }
+#password_change { float:left;margin-left:50px;width:60%; }
+
+div.not_podest img { width:90%;margin-top:2%;border-radius:15px; }
+div.podest img { max-width:100%;height:60%;margin-top:2%;border-radius:15px; }
+
+span.score
+{
+	font-size:16pt;
+	font-weight:bold;
+}
+
+div#logo img
+{
+	width:100%;
+}
+
+
+
+div#language_selection
+{
+	float:left;
+}
+
+div#login
+{
+	float:right;
+	right:0;
+}
+
+/* Login */
+div#login_mask { width:100%;max-width:400px;margin:auto;text-align:center; }
+div#login_mask h1 { font-size:16pt; }
+
+div#statistik { float:left;width:40%;vertical-align:top;border-right:1% solid #DDD;border-left:1% solid #DDD;padding-left:1%; }
+div#aktivitaeten { float:left;width:30%;vertical-align:top;margin-left:1%; }
+
+span.fields { float:left;margin-bottom:10px;width:100%;text-align:center;font-weight:bold;}
+span.fields input { width:90%;text-align:center; }
+span.fields textarea { width:90%;text-align:center; }
+
+div.button { width:100%; }
+div.button a { width:80%; }
+
+table#statistics { border:5px solid #DDD;width:100%; }
+table#statistics th { padding:5px;border-top:1px solid gray;border-bottom:1px solid gray; text-align:center; }
+table#statistics td { padding:5px;text-align:center;border-right:1px solid gray;vertical-align:top; }
+
+
+button
+{
+		background-color: #4CAF50;
+		border: none;
+		color: white;
+		cursor:pointer;
+		padding: 5px 5px;
+		text-align: center;
+		display: inline-block;
+		font-size: 10px;
+		border-radius: 8px;
+		-webkit-transition-duration: 0.4s; /* Safari */
+		transition-duration: 0.4s;
+}
+
+
+input { font-size:14pt; }
+textarea { font-size:14pt;height:150px; }
+div#login_mask { margin-top:10px;padding:3%;width:90%; font-size:10pt;position:relative; }
+div#login_mask h1 { margin:0; }
+div#login_mask input { width:90%;font-size:18pt;height:30px; }
+div#login_mask #login_name { float:none;display:block;}
+div#login_mask #password { float:none;display:block;margin-top:3%; }
+div#login_mask #send_info { float:left;margin-top:5%;margin-bottom:5%;clear:both; }
+div#login_mask #login_info { width:100%;font-size:10pt;}
+div#login_mask button { font-size:24pt;padding:30px;width:100%;border-radius:30px;margin-top:20px; }
+
+
+ div.result_set { text-align:center;float:left;width:100%;margin:0;}
+
+div#statistik { width:100%;border:none; }
+div.page { width:100%; }
+div#females { float:left;	position:relative;width:100%; }
+div#males { float:left;	position:relative;width:100%; }
+div.not_podest { display:none; }
+div.show_not_podest { display:block;width:94%;border:3px solid gray; clear:both;text-align:center;border-radius:15px;padding:3%;cursor:pointer; }
+div.podest { width:100%; }
+div#duell_people { margin:auto; }
+
+div#statistik { width:95%;border-top:3px solid gray;margin-top:20px; }
+div#aktivitaeten { width:95%;border-top:3px solid gray;margin-top:20px; }
+
+div.alert { text-align:center;padding:3%;width:94%; }
+
+div.optional_view { display:none; }
+div#logo { float:left;width:70%;max-width:100px; }
+
+#my_view { float:none; width:90%; max-width:none;}
+#password_change { float:none; width:90%; max-width:none;margin-left:5px;}
+
+/*Smartphone screens*/
+@media only screen and (max-width: 700px)
+{
+	div.ranking { width:30%;float:left;text-align:center;margin:1vw; font-size:14pt;}
+	div.ranking div.user_mit_name { width:100%; }
+
+	div.court { float:left;width:100%;height:50vw; }
+
+	h1 { font-size:24px; }	h2 { font-size:14px; }	h3 { font-size:14pt; }	h4 { font-size:10pt; }
+
+	div#top_left_col { float:left;width:100vw;border-right:5px solid #CCC;clear:both; }
+	div#menu_left { border-right:5px solid #CCC;width:100vw;float:left; padding-bottom:5px; }
+	div#left_col { float:left; width:100vw; border-right:5px solid #CCC; clear:both; }
+	input { width:60vw; }
+
+	div#menu_right { float:left; }
+	div#right_col { float:left;width:100vw; }
+
+	button
+	{
+			background-color: #4CAF50;
+			border: none;
+			color: white;
+			cursor:pointer;
+			padding: 5px 5px;
+			text-align: center;
+			display: inline-block;
+			font-size: 12pt;
+			border-radius: 12px;
+			-webkit-transition-duration: 0.4s; /* Safari */
+			transition-duration: 0.4s;
+	}
+	div.user_mit_name { width:32vw;font-size:12pt; }
+	img.user { width:95%; }
+	div#topmenu { background-color:#FFF;border:1px solid #DDD;border-radius:15px;width:50px;display:none;position:absolute;right:0;top:60px;z-index:100; }
+	div#topmenu img { height:80%;width:80%;margin:5px; }
+	div#topmenu_button { float:right;display:block; width:50px; height:50px; cursor:pointer; }
+	div#topmenu_button img {width:100%;height:100%;float:right;margin-top:10%; }
+}
+
+/*Tablets*/
+@media screen and (min-width: 700px)
+{
+	div.court { float:left;width:50%;height:20vw; }
+	div.ranking { width:15%;float:left;text-align:center;margin:1vw; }
+	div.ranking div.user_mit_name { width:100%; }
+	div#right_col div.user_mit_name { width:120px; }
+
+	div#top_left_col { float:left;width:25vw;border-right:5px solid #CCC;height:80vh;clear:both; }
+	div#menu_left { border-right:5px solid #CCC;width:25vw;float:left; padding-bottom:5px; }
+	div#left_col { float:left; width:25vw; border-right:5px solid #CCC; overflow:auto; height:70vh; clear:both; }
+
+	div#menu_right { width:70vw; float:left; overflow:auto; }
+	div#right_col { float:left; width:68vw;margin-left:10px; }
+
+	div#topmenu { float:right; }
+	div#topmenu_button { display:none; }
+
+	div.user_mit_name { width:32%; }
+	img.user { width:100%; }
+
+	button
+	{
+			background-color: #4CAF50;
+			border: none;
+			color: white;
+			cursor:pointer;
+			padding: 5px 5px;
+			text-align: center;
+			display: inline-block;
+			font-size: 14px;
+			border-radius: 8px;
+			-webkit-transition-duration: 0.4s; /* Safari */
+			transition-duration: 0.4s;
+	}
+
+	/*General*/
+	span#main_title { font-size:24pt;font-weight:bold; }
+	span#subtitle { font-size:18pt;font-weight:bold;font-style:italic;font-weight:lighter; }
+	div#duell { width:75%; }
+	div#logo { max-width:300px; float:left; }
+
+	/*index.php*/
+	div#females { float:left;	position:relative;width:49%; }
+	div#males { float:left;	position:relative;width:49%; }
+
+}
+
+/*Desktops*/
+@media screen and (min-width: 1100px)
+{
+	div#top_left_col { float:left;width:25vw;border-right:5px solid #CCC;height:80vh;clear:both; }
+	div#menu_left { border-right:5px solid #CCC;width:25vw;float:left; padding-bottom:5px; }
+	div#left_col { float:left; width:25vw; border-right:5px solid #CCC; overflow:auto; height:70vh; clear:both; }
+
+	div#menu_right { width:70vw; float:left; overflow:auto; }
+	div#right_col { float:left; width:68vw;margin-left:10px; }
+
+	div.user_mit_name { width:33%; }
+	img.user { width:100%; }
+
+	button
+	{
+			background-color: #4CAF50;
+			border: none;
+			border-color:gray;
+			color: white;
+			cursor:pointer;
+			padding: 5px 5px;
+			text-align: center;
+			display: inline-block;
+			font-size: 16px;
+			border-radius: 12px;
+			-webkit-transition-duration: 0.4s; /* Safari */
+			transition-duration: 0.4s;
+	}
+	span.score { font-size:10pt; }
+  div.podest img { height:60%; }
+}
