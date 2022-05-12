@@ -7,7 +7,7 @@ try
 {
 	$myPage = new page();
 	$myPage->login_required=false;
-	$myPage->set_title("Little Lessons");
+	$myPage->set_title("Little Lessons Test");
 	$myPage->add_content("<div class='container-lg my-4'>");
 	$myPage->add_content("	<div class='row justify-content-start mp-5'>");
 	$db->sql_query("SELECT * FROM courses");
