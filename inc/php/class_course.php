@@ -3,30 +3,72 @@
 //09.05.2022 Claude Hübscher
 //-----------------------------------------------------------------------------
 //*****************************************************************************
+
 class course
 {
+    private $db;
+
+    //Course
     public $id;
     public $title;
     public $price;
     public $teaser;
     public $teacher_id;
+    public $min_attendees;
+    public $max_attendees;
+
+    //Appointment
+    public $appointment_id;
+    public $date;
+    public $start_time;
+    public $end_time;
+    public $num_attendees;
+    public $min_attendees_reached;
+
 
     function __construct($id=null)
     {
+        include(level.'inc/db.php');
+        $this->db = $db;
         if($id>0)
         {
-            $this->load($id);
+            $this->load_by_course_id($id);
         }
     }
 
-    function load($id)
+    function load_by_course_id($id)
     {
-        include(level.'inc/db.php');
-        $data = $db->sql_query_with_fetch("SELECT * FROM courses WHERE course_id=:id",array('id'=>$id));
+        $data = $this->db->sql_query_with_fetch("SELECT * FROM courses WHERE course_id=:id",array('id'=>$id));
         $this->id=$id;
         $this->title = $data->course_title;
         $this->text = $data->course_description;
         $this->teacher_id = $data->course_user_id;
+        $this->min_attendees = $data->course_min_attendees;
+        $this->max_attendees = $data->course_max_attendees;
+    }
+
+    function load_by_appointment_id($id)
+    {
+        $data = $this->db->sql_query_with_fetch("SELECT *,
+                                                DATE_FORMAT(appointment_start,'%d.%m.%Y') as start_d,
+                                                DATE_FORMAT(appointment_start,'%H:%i') as start_t,
+                                                DATE_FORMAT(appointment_end,'%d.%m.%Y') as end_d,
+                                                DATE_FORMAT(appointment_end,'%H:%i') as end_t
+                                            FROM appointments 
+                                            LEFT JOIN courses on appointments.appointment_course_id = courses.course_id
+                                            LEFT JOIN 
+                                            (
+                                                SELECT MAX(appointment2user_appointment_id) as x, COUNT(*) as num_attendees FROM appointment2user GROUP BY appointment2user_appointment_id
+                                            ) as count_apps ON appointments.appointment_id = count_apps.x
+                                            WHERE appointment_id=:id",array('id'=>$id));
+        $this->load_by_course_id($data->course_id);
+
+        $this->appointment_id=$id;
+        $this->date = $data->start_d;
+        $this->start_time = $data->start_t;
+        $this->end_time = $data->end_t;
+        $this->num_attendees = $data->num_attendees;
+        if($this->num_attendees+1<$this->min_attendees) { $this->min_attendees_reached = false; } else {$this->min_attendees_reached = true; }
     }
 
     function get_card()
@@ -55,32 +97,7 @@ class course
                         <h5 class='modal-title' id='exampleModalLabel'>Kurs buchen</h5>
                         <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Schliessen'></button>
                     </div>
-                    <div class='modal-body'>
-                        <form id='book_course' action='book.php' method='POST' name='register'>
-                        <div class='form-floating mb-3'>
-                            <select class='form-select' id='gender' name='gender' required>
-                            <option selected></option>
-                            <option value='Herr'>Herr</option>
-                            <option value='Frau'>Frau</option>
-                            </select>
-                            <label for='gender'>Anrede</label>
-                        </div>
-                        <div class='form-floating mb-3'>
-                            <input type='hidden' id='appointment_id' name='appointment_id'/>
-                            <input type='text' class='form-control form-control-lg' id='firstname' name='firstname' required>
-                            <label for='firstname'>Vorname</label>
-                        </div>
-                        <div  class='form-floating mb-3'>
-                            <input type='text' class='form-control' id='lastname' name='lastname' required>
-                            <label for='lastname' class='form-label'>Nachname</label>
-                        </div>
-                        <div class='form-floating mb-3'>
-                            <input type='email' class='form-control' id='email' name='email' required>
-                            <label for='email' class='form-label'>E-Mail Adresse</label>
-                        </div>
-                        <button onclick='this.submit();' type='submit' class='btn btn-primary'>Registrieren</button>
-                        </form>
-            
+                    <div class='modal-body' id='modal_body'>
                     </div>
                     </div>
                 </div>
@@ -100,7 +117,10 @@ class course
                             ".$this->text."
                         </div>
                         <div class='col-sm-12 col-xl-4 my-2'>
+                            <h3>Termine</h3>
+                            <div id='appointments'>
                             ".$this->get_appointments()."
+                            </div>
                         </div>
                     </div>
                     <div class='row'>
@@ -128,23 +148,60 @@ class course
 
     public function get_appointments()
     {
-        $txt = "<h3>Termine</h3>";
-        include(level.'inc/db.php');
-        $data = $db->sql_query("SELECT *, 
-                                DATE_FORMAT(appointment_start,'%d.%m.%Y') as start_d,
-                                DATE_FORMAT(appointment_start,'%H:%i') as start_t,
-                                DATE_FORMAT(appointment_end,'%d.%m.%Y') as end_d,
-                                DATE_FORMAT(appointment_end,'%H:%i') as end_t
-                                FROM appointments WHERE appointment_course_id=:id",array('id'=>$this->id));
-        while($d = $db->get_next_res())
+        $txt = "";
+        $db2 = clone($this->db);
+        $data = $db2->sql_query("SELECT *
+                                FROM appointments 
+                                WHERE appointment_course_id=:id",array('id'=>$this->id));
+        while($d = $db2->get_next_res())
         {
+            $this->load_by_appointment_id($d->appointment_id);
             $txt.= "<div class='my-2 p-2' style='border:2px solid gray;border-radius:10px;'>";
-            $txt.= "<table style='width:100%;'><tr><td>".$d->start_d."</td><td rowspan='2' style='text-align:right;'>
-            <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#exampleModal' onclick=\"$('#appointment_id').val(".$d->appointment_id.");\">
-            Kurs buchen   
-          </button>
-            </td></tr><tr><td>".$d->start_t." - ".$d->end_t."</td></tr></table>";
+            $num_free = $this->max_attendees-$this->num_attendees;
+            if($num_free > 1) { $txt_free_places = $num_free." Plätze frei"; }
+            elseif ($num_free == 1) { $txt_free_places = "1 Platz frei"; }
+            else { $txt_free_places = "Kurs ausgebucht"; }
+            
+
+            $txt.= "<table style='width:100%;'><tr><td><i class='bi bi-calendar-date me-2'></i>".$this->date."</td><td rowspan='3' style='text-align:right;'>";
+            if($num_free > 0)
+            {
+                if($this->min_attendees_reached) { $class = 'btn-success'; } else { $class = 'btn-warning'; }
+                $txt.= "
+                <button id='appointment".$this->appointment_id."' type='button' class='btn ".$class."' data-bs-toggle='modal' data-bs-target='#exampleModal' onclick=\"load_modal(".$d->appointment_id.");\">
+                    Kurs buchen <br/>(".$txt_free_places.")
+                </button>";
+            }
+            else
+            {
+                $txt.= "
+                <button id='appointment".$this->appointment_id."' type='button' class='btn btn-secondary'>
+                    ".$txt_free_places."
+                </button>";
+
+            }
+            $txt.= "</td></tr><tr><td><i class='bi bi-alarm me-2'></i>".$this->start_time." - ".$this->end_time."</td></tr>";
+            $txt.= "</tr><tr><td><i class='bi bi-people-fill me-2'></i>".$this->min_attendees."-".$this->max_attendees."</td></tr>";
+            
+            $txt.= "</table>";
             $txt.= "</div>";
+        }
+        return $txt;
+    }
+
+    public function get_booking_confirmation()
+    {
+        if($this->min_attendees_reached)
+        {
+            $txt = "Mit dieser Bestätigung buchen sie den Kurs <b>".$this->title."</b> am ".$this->date." von ".$this->start_time." - ".$this->end_time." Uhr definitiv.<p/>
+            <br/>Sie erhalten vom Kursleiter dann noch eine Bestätigung und ev. weitere Informationen<hr/>";
+            $txt.= "<button type='button' class='btn btn-primary' onclick=\"book_course(".$this->appointment_id.");\">Kurs definitiv buchen</button>";
+        }
+        else
+        {
+            $txt = "Mit dieser Bestätigung buchen sie den Kurs <b>".$this->title."</b> am ".$this->date." von ".$this->start_time." - ".$this->end_time." Uhr definitiv.<p/>
+            <br/>Aktuell sind noch zu wenige Teilnehmer angemeldet. Sie werden informiert, falls der Kurs abgesagt werden muss.<hr/>";
+            $txt.= "<button type='button' class='btn btn-primary' onclick=\"book_course(".$this->appointment_id.");\">Kurs definitiv buchen</button>";
         }
         return $txt;
     }

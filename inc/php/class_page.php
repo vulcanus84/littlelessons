@@ -60,6 +60,7 @@ class page
     //Set standard style sheets for all files
     //$this->add_css_link(level."inc/bootstrap-5-1-3/css/bootstrap.min.css");
     $this->add_css_link(level."inc/css/main.min.css");
+    $this->add_css_link(level."inc/css/styles.css");
     $this->add_js_link(level."inc/js/jquery-3.5.1.min.js");
     $this->add_js_link(level."inc/js/jquery-1.11.3-ui.min.js");
 

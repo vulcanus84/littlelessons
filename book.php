@@ -5,16 +5,12 @@ require_once(level."inc/standard_includes.php");		//Load all necessary files (DB
 
 try
 {
-	$myPage = new page();
-    $myPage->login_required=false;
-    $myPage->add_content("Vielen Dank für die Buchung");
-	print $myPage->get_html_code();
+	//print $_POST['appointment_id'];
+	header("Location: course_details.php");
 }
 catch (Exception $e)
 {
-	$myPage = new page();
-	$myPage->error_text = $e->getMessage();
-	print $myPage->get_html_code();
+	print $e->getMessage();
 }
 
 ?>

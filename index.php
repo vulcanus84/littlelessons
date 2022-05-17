@@ -7,17 +7,17 @@ try
 {
 	$myPage = new page();
 	$myPage->login_required=false;
-	$myPage->set_title("Little Lessons Test");
-	$myPage->add_content("<div class='container-lg my-4'>");
-	$myPage->add_content("	<div class='row justify-content-start mp-5'>");
+	$myPage->set_title("Little Lessons");
+	$myPage->add_content("<div class='container-lg my-4'>
+							<div class='row justify-content-start mp-5'>");
 	$db->sql_query("SELECT * FROM courses");
 	while($d = $db->get_next_res())
 	{
 		$myCourse = new course($d->course_id);
 		$myPage->add_content($myCourse->get_card());
 	}
-	$myPage->add_content("	</div>");
-	$myPage->add_content("</div>");
+	$myPage->add_content("	</div>
+						  </div>");
 
 
 	print $myPage->get_html_code();
