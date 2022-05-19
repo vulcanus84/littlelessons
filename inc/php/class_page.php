@@ -419,7 +419,7 @@ else
     $page = new header_mod();                               //about the current page and header modification functions
     $result = $this->db->sql_query("SELECT * FROM users
                            WHERE user_account = :user_account OR user_email = :user_account",array('user_account'=>$user_login));
-    $daten = $this->db->get_next_res();
+    $data = $this->db->get_next_res();
     if ($this->db->count()==0)
     {
       if(trim($user_login)!='')
@@ -430,16 +430,28 @@ else
     }
     else
     {
-      if (hash('sha256', $pw)==$daten->user_password)
+      if (hash('sha256', $pw)==$data->user_password)
       {
-        $_SESSION['login_user'] = new user($daten->user_id);
-        $page->remove_parameter('logout');
-        $page->remove_parameter('user_login');
-        $page->remove_parameter('user_id');
-        $page->remove_parameter('pw');
-        $page->remove_parameter('x');
-   			$this->logger->write_to_log('User','Login');
-        header("Location: ".$page->get_link());
+        if($data->user_status=='Registred')
+        {
+          $this->logger->write_to_log('User','Try to login with not verified email for user '.$user_login);
+          $myUser = new user($data->user_id);
+          $myUser->send_verification_email();
+          $this->error_text = "Deine E-Mail Adresse wurde noch nicht bestätigt. <br/>Ich habe die die Aktivierungs E-Mail soeben nochmals gesendet.";
+          $page->remove_parameter('action');
+          $page->remove_parameter('user');
+        }
+        else
+        {
+          $_SESSION['login_user'] = new user($data->user_id);
+          $page->remove_parameter('logout');
+          $page->remove_parameter('user_login');
+          $page->remove_parameter('user_id');
+          $page->remove_parameter('pw');
+          $page->remove_parameter('x');
+           $this->logger->write_to_log('User','Login');
+          header("Location: ".$page->get_link());
+        }
       }
       else
       {

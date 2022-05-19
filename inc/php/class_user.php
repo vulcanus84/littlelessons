@@ -10,6 +10,7 @@ class user
 	public $gender;
 	public $image_path;
 	public $status;
+	public $verification_code;
 
 	private $frontend_language;
 	private $db;
@@ -57,12 +58,23 @@ class user
 		$this->status = $status;
 	}
 
+	public function send_verification_email()
+	{
+		$myMail = new littlelessons_mailer();
+		$myMail->add_recipient($this->id);
+		$myMail->set_title("E-Mail Bestätigung");
+		$myMail->add_text("bitte bestätige die E-Mail Adresse mit dem folgenden Link:<br/>");
+		$myMail->add_text("<a href='https://www.clanic.ch/littlelessons/app_user_admin/verify.php?verification_code=".$this->verification_code."'>https://www.clanic.ch/littlelessons/app_user_admin/verify.php?verification_code=".$this->verification_code."</a>");
+		$myMail->send_mail();
+	}
+
 	public function save()
 	{
 		include(level.'inc/db.php');
 		if($this->id==0)
 		{
 			$myGUID = $this->create_guid();
+			$this->verification_code = $myGUID;
 
 			$db->insert(array('user_firstname'=>$this->firstname,
 								'user_lastname'=>$this->lastname,
@@ -70,15 +82,10 @@ class user
 								'user_email'=>$this->email,
 								'user_gender'=>$this->gender,
 								'user_language' => $this->get_frontend_language(),
-								'user_verification_code' => $myGUID
+								'user_verification_code' => $this->verification_code
 							),'users');
 			$this->load_user_by_id($db->last_inserted_id);
-			$myMail = new littlelessons_mailer();
-			$myMail->add_recipient($this->id);
-			$myMail->set_title("E-Mail Bestätigung");
-			$myMail->add_text("bitte bestätigten sie die E-Mail Adresse mit dem folgenden Link:");
-			$myMail->add_text("<a href='https://www.clanic.ch/littlelessons/app_user_admin/verify.php?verification_code=".$myGUID."'>https://www.clanic.ch/littlelessons/app_user_admin/verify.php?verification_code=".$myGUID."</a>");
-			$myMail->send_mail();
+			$this->send_verification_email();
 		}
 		else
 		{
@@ -120,6 +127,7 @@ class user
 			$this->lastname = $res->user_lastname;
 			$this->status = $res->user_status;
 			$this->email = $res->user_email;
+			$this->verification_code = $res->user_verification_code;
 			$this->fullname = $this->firstname." ".$this->lastname;
 			if(trim($this->fullname)=='') { $this->fullname = $this->login; }
 			$this->gender = $res->user_gender;
