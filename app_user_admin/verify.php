@@ -6,6 +6,7 @@ require_once(level."inc/standard_includes.php");		//Load all necessary files (DB
 try
 {
 	$myPage = new page();
+	$myPage->login_required=false;
     if(isset($_GET['verification_code']))
     {
         $db->sql_query("SELECT * FROM users WHERE user_verification_code=:code",array('code'=>$_GET['verification_code']));
