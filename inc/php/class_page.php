@@ -194,7 +194,13 @@ class page
       //If a error occured show the error and no content
       if(isset($this->error_text))
       {
-        $txt.= "<div style='background-color:#FFFFAA;color:black;border-radius:15px;padding:10px;margin-bottom:10px;border:1px solid red;'>".$this->error_text."</div>";
+        $txt.= "     <div class='container-lg my-4'>\n";
+        $txt.= "	      <div class='row justify-content-start mp-5'>\n";
+        $txt.= "          <div class='alert alert-danger' role='alert'>\n";
+        $txt.= $this->error_text;
+        $txt.= "          </div>\n";
+        $txt.= "        </div>\n";
+        $txt.= "      </div><!--End Content-->\n";
       }
       else
       {
@@ -292,28 +298,22 @@ class page
     $txt.= "
           <div class='container-lg'>
             <nav class='navbar navbar-expand-lg navbar-light border-bottom'>
-              <a class='navbar-brand' href='index.php'><span class='display-5'>Little Lessons</span></a>
+              <a class='navbar-brand' href='".level."index.php'><span class='display-5'>Little Lessons</span></a>
               <button class='navbar-toggler' type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation'>
                 <span class='navbar-toggler-icon'></span>
               </button>
               <div class='collapse navbar-collapse' id='navbarSupportedContent'>
                 <ul class='navbar-nav me-auto mb-2 mb-lg-0'>
-                  <li class='nav-item'>
-                    <a class='nav-link' href='quality.php'>Qualität</a>
-                  </li>
-                  <li class='nav-item'>
-                    <a class='nav-link' href='about.php'>Über mich</a>
-                  </li>
             
                 ";
 if(!isset($_SESSION['login_user']))
 {
   $txt.= "
                   <li class='nav-item'>
-                    <a class='nav-link' href='register.php'>Registrieren</a>
+                    <a class='nav-link' href='".level."app_user_admin/register.php'>Registrieren</a>
                   </li>
                   <li class='nav-item'>
-                    <a class='nav-link' href='my_user.php'>Login</a>
+                    <a class='nav-link' href='".level."app_user_admin/my_user.php'>Login</a>
                   </li>
   ";
 }
@@ -321,10 +321,10 @@ else
 {
   $txt.= "
                   <li class='nav-item'>
-                    <a class='nav-link' href='my_user.php'>Mein Profil</a>
+                    <a class='nav-link' href='".level."app_user_admin/my_user.php'>Mein Profil</a>
                   </li>
                   <li class='nav-item'>
-                    <a class='nav-link' href='my_courses.php'>Mein Kurse</a>
+                    <a class='nav-link' href='".level."app_course_admin/my_courses.php'>Mein Kurse</a>
                   </li>
                   <li class='nav-item'>
                     <a class='nav-link' href='?action=logout'>Logout</a>

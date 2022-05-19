@@ -1,4 +1,6 @@
 <?php
+require_once("class_mail_littlelessons.php");
+
 class user
 {
 	public $firstname;
@@ -6,10 +8,8 @@ class user
 	public $fullname;
 	public $email;
 	public $gender;
-	public $birthday;
-	public $training_location;
 	public $image_path;
-	public $hidden;
+	public $status;
 
 	private $frontend_language;
 	private $db;
@@ -46,6 +46,11 @@ class user
 		$this->gender = $gender;
 	}
 
+	function set_status($status)
+	{
+		$this->status = $status;
+	}
+
 	public function __construct($user_id=0)
 	{
     	include(level.'inc/db.php');
@@ -57,12 +62,14 @@ class user
 		include(level.'inc/db.php');
 		if($this->id==0)
 		{
+			$myGUID = $this->create_guid();
 			$db->insert(array('user_firstname'=>$this->firstname,
 								'user_lastname'=>$this->lastname,
 								'user_account'=>$this->email,
 								'user_email'=>$this->email,
 								'user_gender'=>$this->gender,
-								'user_language' => $this->get_frontend_language()
+								'user_language' => $this->get_frontend_language(),
+								'user_verification_code' => $myGUID
 							),'users');
 			$this->load_user_by_id($db->last_inserted_id);
 		}
@@ -73,6 +80,7 @@ class user
 								'user_account'=>$this->email,
 								'user_email'=>$this->email,
 								'user_gender'=>$this->gender,
+								'user_status'=>$this->status,
 								'user_language' => $this->get_frontend_language()
 							),'users','user_id',$this->id);
 		}
@@ -94,7 +102,7 @@ class user
   	public function load_user_by_id($id)
   	{
     	include(level.'inc/db.php');
-    	$db->sql_query("SELECT *, DATE_FORMAT(user_birthday,'%d.%m.%Y') as user_birthday FROM users	WHERE user_id=:uid",array('uid'=>$id));
+    	$db->sql_query("SELECT * FROM users	WHERE user_id=:uid",array('uid'=>$id));
     	if($db->count()>0)
     	{
 			$res = $db->get_next_res();
@@ -107,12 +115,9 @@ class user
 			$this->fullname = $this->firstname." ".$this->lastname;
 			if(trim($this->fullname)=='') { $this->fullname = $this->login; }
 			$this->gender = $res->user_gender;
-			$this->birthday = $res->user_birthday;
-			$this->training_location = $res->user_training_location;
 
 			$this->set_frontend_language($res->user_language);
 			$this->image_path = "app_user_admin/pics/".$this->login.".jpg";
-			if($res->user_hide>0) { $this->hidden = true; } else { $this->hidden = false; }
     	}
     	else
 		{
@@ -268,6 +273,27 @@ class user
 			throw new Exception("Altes Passwort falsch");
 		}
 	}
+
+	// Create GUID (Globally Unique Identifier)
+	function create_guid() 
+	{ 
+		$guid = '';
+		$namespace = rand(11111, 99999);
+		$uid = uniqid('', true);
+		$data = $namespace;
+		$data .= $_SERVER['REQUEST_TIME'];
+		$data .= $_SERVER['HTTP_USER_AGENT'];
+		$data .= $_SERVER['REMOTE_ADDR'];
+		$data .= $_SERVER['REMOTE_PORT'];
+		$hash = strtoupper(hash('ripemd128', $uid . $guid . md5($data)));
+		$guid = substr($hash, 0, 8) . '-' .
+				substr($hash, 8, 4) . '-' .
+				substr($hash, 12, 4) . '-' .
+				substr($hash, 16, 4) . '-' .
+				substr($hash, 20, 12);
+		return $guid;
+	}
+
 }
 
 ?>

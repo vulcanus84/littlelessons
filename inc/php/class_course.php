@@ -81,7 +81,7 @@ class course
       $txt.= "    <div class='card-body'>";
       $txt.= "      <h5 class='card-title'>".$this->title."</h5>";
       $txt.= "      <p class='card-text'>".$this->text."</p>";
-      $txt.= "      <a href='course_details.php?id=".$this->id."' class='btn btn-primary'>Kurs anschauen</a>";
+      $txt.= "      <a href='".level."app_course_admin/course_details.php?id=".$this->id."' class='btn btn-primary'>Kurs anschauen</a>";
       $txt.= "    </div>";
       $txt.= "  </div>";
       $txt.= "</div>";
@@ -159,11 +159,11 @@ class course
 
     public function get_course_pic()
     {
-        if(file_exists("app_course_admin/course_pics/".$this->id.".jpg"))
+        if(file_exists(level."app_course_admin/course_pics/".$this->id.".jpg"))
         {
             return "<img class='img-fluid rounded-3' src='".level."app_course_admin/course_pics/".$this->id.".jpg' alt='".$this->title."' title='".$this->title."'/>";
         }
-        if(file_exists("app_course_admin/course_pics/".$this->id.".png"))
+        if(file_exists(level."app_course_admin/course_pics/".$this->id.".png"))
         {
             return "<img class='img-fluid rounded-3' src='".level."app_course_admin/course_pics/".$this->id.".png' alt='".$this->title."' title='".$this->title."'/>";
         }
