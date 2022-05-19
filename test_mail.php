@@ -8,7 +8,8 @@ require_once(level."inc/php/class_mail_littlelessons.php");		//Load all necessar
 
 $myMail = new littlelessons_mailer();
 $myMail->add_recipient(1);
-$myMail->add_text("Hello World!");
+$myMail->set_title("E-Mail Bestätigung");
+$myMail->add_text("bitte bestätigten sie die E-Mail Adresse mit dem folgenden Link:");
 $myMail->send_mail();
 
 ?>
