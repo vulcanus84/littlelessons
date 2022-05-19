@@ -324,6 +324,9 @@ else
                     <a class='nav-link' href='my_user.php'>Mein Profil</a>
                   </li>
                   <li class='nav-item'>
+                    <a class='nav-link' href='my_courses.php'>Mein Kurse</a>
+                  </li>
+                  <li class='nav-item'>
                     <a class='nav-link' href='?action=logout'>Logout</a>
                   </li>
   ";

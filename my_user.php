@@ -341,8 +341,6 @@ try
 	  </div>		
 								"); 
 		
-		$myPage->add_content("<div class='container-lg'>");
-
 	}
 	else {
 		$myPage->add_content_with_translation('Kein Benutzer eingeloggt');

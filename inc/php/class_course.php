@@ -11,6 +11,7 @@ class course
     //Course
     public $id;
     public $title;
+    public $description;
     public $price;
     public $teaser;
     public $teacher_id;
@@ -41,6 +42,7 @@ class course
         $data = $this->db->sql_query_with_fetch("SELECT * FROM courses WHERE course_id=:id",array('id'=>$id));
         $this->id=$id;
         $this->title = $data->course_title;
+        $this->description = $data->course_description;
         $this->text = $data->course_description;
         $this->teacher_id = $data->course_user_id;
         $this->min_attendees = $data->course_min_attendees;
@@ -80,6 +82,20 @@ class course
       $txt.= "      <h5 class='card-title'>".$this->title."</h5>";
       $txt.= "      <p class='card-text'>".$this->text."</p>";
       $txt.= "      <a href='course_details.php?id=".$this->id."' class='btn btn-primary'>Kurs anschauen</a>";
+      $txt.= "    </div>";
+      $txt.= "  </div>";
+      $txt.= "</div>";
+      return $txt;
+    }
+
+    function get_card_edit()
+    {
+      $txt = "";
+      $txt.= "<div class='col-sm-6 col-xl-4 my-2'>";
+      $txt.= "  <div class='card'>";
+      $txt.= "    <div class='card-body'>";
+      $txt.= "      <h5 class='card-title'>".$this->title."</h5>";
+      $txt.= "      <a href='?course_id=".$this->id."' class='btn btn-warning'>Kurs bearbeiten</a>";
       $txt.= "    </div>";
       $txt.= "  </div>";
       $txt.= "</div>";
@@ -143,7 +159,14 @@ class course
 
     public function get_course_pic()
     {
-        return "<img class='img-fluid rounded-3' src='".level."app_course_admin/course_pics/".$this->id.".jpg' alt='".$this->title."' title='".$this->title."'/>";
+        if(file_exists("app_course_admin/course_pics/".$this->id.".jpg"))
+        {
+            return "<img class='img-fluid rounded-3' src='".level."app_course_admin/course_pics/".$this->id.".jpg' alt='".$this->title."' title='".$this->title."'/>";
+        }
+        if(file_exists("app_course_admin/course_pics/".$this->id.".png"))
+        {
+            return "<img class='img-fluid rounded-3' src='".level."app_course_admin/course_pics/".$this->id.".png' alt='".$this->title."' title='".$this->title."'/>";
+        }
     }
 
     public function get_appointments()
