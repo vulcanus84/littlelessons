@@ -17,13 +17,13 @@ class littlelessons_mailer extends PHPMailer
 	{
     	include(level.'inc/db.php');
 		$this->db = $db;
-		$this->From = 'littlelessons@hz-inova.com';
+		$this->From = 'clahu@gmx.ch';
 		$this->FromName = 'LittleLessons';
 		$this->application = 'Little Lessons';
 		$this->isHTML(true);
 		$this->t = new translation(clone($this->db),$lang);
 		$this->intro = $this->t->translate('Guten Tag');
-		$this->regards = $this->t->translate('Mit freundlichen Grüssen')."<br>".$this->t->translate('Ihr Little Lessons Admin');
+		$this->regards = $this->t->translate('Liebe Grüsse und einen wunderschönen Tag')."<br>".$this->t->translate('Dein Little Lessons Team');
 	}
 	function add_recipient_by_login($login)
 	{

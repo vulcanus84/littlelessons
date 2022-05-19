@@ -7,6 +7,6 @@
 
   $pageWidth = "950"; //bestimmt die verwendete Breite, optimiert auf 950px
   $debug_mail=""; //Alle E-Mails werden auf die in dieser Variable definierte Mail-Adresse umgeleitet
-  $tblheight = "440"; //Definiert die Höhe der Tabelle, unterschiedlich in Detailansicht
+  $tblheight = "440"; //Definiert die Hï¿½he der Tabelle, unterschiedlich in Detailansicht
 
 ?>

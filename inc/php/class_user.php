@@ -18,6 +18,12 @@ class user
 	protected $id;
 	protected $login;
 
+	public function __construct($user_id=0)
+	{
+    	include(level.'inc/db.php');
+    	if($user_id!=0) { $this->load_user_by_id($user_id); }
+	}
+
 	public function __get($name)
 	{
 		if (isset($this->$name)) { return $this->$name; } else { return null;  }
@@ -51,18 +57,13 @@ class user
 		$this->status = $status;
 	}
 
-	public function __construct($user_id=0)
-	{
-    	include(level.'inc/db.php');
-    	if($user_id!=0) { $this->load_user_by_id($user_id); }
-	}
-
 	public function save()
 	{
 		include(level.'inc/db.php');
 		if($this->id==0)
 		{
 			$myGUID = $this->create_guid();
+
 			$db->insert(array('user_firstname'=>$this->firstname,
 								'user_lastname'=>$this->lastname,
 								'user_account'=>$this->email,
@@ -72,6 +73,12 @@ class user
 								'user_verification_code' => $myGUID
 							),'users');
 			$this->load_user_by_id($db->last_inserted_id);
+			$myMail = new littlelessons_mailer();
+			$myMail->add_recipient($this->id);
+			$myMail->set_title("E-Mail Bestätigung");
+			$myMail->add_text("bitte bestätigten sie die E-Mail Adresse mit dem folgenden Link:");
+			$myMail->add_text("<a href='https://www.clanic.ch/littlelessons/app_user_admin/verify.php?verification_code=".$myGUID."'>https://www.clanic.ch/littlelessons/app_user_admin/verify.php?verification_code=".$myGUID."</a>");
+			$myMail->send_mail();
 		}
 		else
 		{
@@ -111,6 +118,7 @@ class user
 
 			$this->firstname = $res->user_firstname;
 			$this->lastname = $res->user_lastname;
+			$this->status = $res->user_status;
 			$this->email = $res->user_email;
 			$this->fullname = $this->firstname." ".$this->lastname;
 			if(trim($this->fullname)=='') { $this->fullname = $this->login; }
