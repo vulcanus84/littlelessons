@@ -195,10 +195,8 @@ class page
       if(isset($this->error_text))
       {
         $txt.= "     <div class='container-lg my-4'>\n";
-        $txt.= "	      <div class='row justify-content-start mp-5'>\n";
-        $txt.= "          <div class='alert alert-danger' role='alert'>\n";
+        $txt.= "        <div class='alert alert-danger' role='alert'>\n";
         $txt.= $this->error_text;
-        $txt.= "          </div>\n";
         $txt.= "        </div>\n";
         $txt.= "      </div><!--End Content-->\n";
       }
@@ -351,9 +349,7 @@ else
   private function get_content()
   {
     $txt =  "     <div class='container-lg my-4'>\n";
-    $txt.=  "	      <div class='row justify-content-start mp-5'>\n";
     $txt.= $this->content;
-    $txt.= "        </div>\n";
     $txt.= "      </div><!--End Content-->\n";
     return $txt;
   }
