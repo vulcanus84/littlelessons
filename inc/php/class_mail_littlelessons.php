@@ -76,23 +76,22 @@ class littlelessons_mailer extends PHPMailer
 							<!DOCTYPE html>\n
 								<head>\n
 						      <style>\n
-						        body {font-family: arial, helvetica, sans-serif; font-size:10pt;}\n
-						        table.master {border: #7b9fFF 1px solid;}\n
-						        td.changed {color:red;}\n
+						        body {font-family: arial; font-size:11pt;}\n
+						        table.master {background-color:#F3F3F3;border-radius:20px; border: 1px solid #CCC;padding:5px; }\n
 										h2 { font-size:13pt;margin-top:5px;margin-bottom:5px; }
 						      </style>\n
 								</head>\n
 								<body>\n
-						      <table class='master' width='100%' cellpadding='0' cellspacing='0'>\n
+						      <table class='master' style='width:100%;'>\n
 						        <tr>\n
-						          <td style='color:white;font-size:20pt;padding:5px;' bgcolor='#4E7DD1'>".$this->application."</td>\n
+						          <td style='font-size:20pt;font-weight:bold;padding:5px;color:#444;'>".$this->application."</td>\n
 						        </tr>\n
 						        <tr>\n
-					            <td style='color:white;font-size:12pt;padding:5px;' bgcolor='#acbaff'>".$this->title."</td>\n
+					            <td style='font-size:12pt;padding-left:5px;padding-bottom:10px;border-bottom:1px solid #CCC;color:#444;'>".$this->title."</td>\n
 					          </tr>\n
 					          <tr>\n
-					            <td style='padding:5px;'>\n
-												".$this->intro."<p/>".$this->body_text."<p/>".$this->regards."\n
+					            <td style='padding-left:5px;'>\n
+												<p>".$this->intro."</p><p>".$this->body_text."</p><p>".$this->regards."</p>\n
 											</td>\n
 										</tr>\n
 									</table>\n
