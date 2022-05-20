@@ -404,7 +404,7 @@ else
 		$_SESSION['login_user']->save();
     $this->logger->write_to_log('User','Logout');
     session_destroy();
-    header("Location: index.php");
+    header("Location: ".level."index.php");
     die();
   }
 
