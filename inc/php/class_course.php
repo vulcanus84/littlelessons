@@ -10,6 +10,7 @@ class course
 
     //Course
     public $id;
+    public $master_id;
     public $title;
     public $description;
     public $price;
@@ -17,6 +18,7 @@ class course
     public $teacher_id;
     public $min_attendees;
     public $max_attendees;
+    public $status;
 
     //Appointment
     public $appointment_id;
@@ -26,6 +28,9 @@ class course
     public $num_attendees;
     public $min_attendees_reached;
 
+    //Others
+    private $mode; //edit or view
+
 
     function __construct($id=null)
     {
@@ -33,20 +38,110 @@ class course
         $this->db = $db;
         if($id>0)
         {
-            $this->load_by_course_id($id);
+            $this->load_course($id);
         }
     }
 
-    function load_by_course_id($id)
+    public function change_status($status)
     {
-        $data = $this->db->sql_query_with_fetch("SELECT * FROM courses WHERE course_id=:id",array('id'=>$id));
-        $this->id=$id;
-        $this->title = $data->course_title;
-        $this->description = $data->course_description;
-        $this->text = $data->course_description;
-        $this->teacher_id = $data->course_user_id;
-        $this->min_attendees = $data->course_min_attendees;
-        $this->max_attendees = $data->course_max_attendees;
+        if($status=='Abort')
+        {
+            $this->db->sql_query("DELETE FROM courses_edit WHERE course_master_id=:id AND course_status='Edit'",array('id'=>$this->master_id));
+        }
+
+        if($status=='Edit')
+        {
+            $this->db->sql_query("SELECT * FROM courses_edit WHERE course_master_id=:id AND course_status!='Released'",array('id'=>$this->id));
+            if($this->db->count() > 0)
+            {
+                $d = $this->db->get_next_res();
+                $this->db->sql_query("UPDATE courses_edit SET course_status='Edit' WHERE course_master_id=:id AND course_status='Approval'",array('id'=>$this->master_id));
+                $this->load_course($d->course_id);
+            }
+            else
+            {
+                $this->db->insert(array('course_master_id'=>$_GET['course_id']) ,'courses_edit');
+                $this->load_course($this->db->last_inserted_id);
+            }
+        }
+
+        if($status=='Approval')
+        {
+            $this->db->sql_query("UPDATE courses_edit SET course_status='Approval' WHERE course_master_id=:id AND course_status='Edit'",array('id'=>$this->master_id));
+        }
+    }
+
+    public function save()
+    {
+        if($this->mode=='edit')
+        {
+            if($this->id>0)
+            {
+                $db->update(array('course_title'=>$this->title,
+                                    'course_description'=>$this->description,
+                                    'course_price'=>$this->price,
+                                    'course_min_attendees'=>$this->min_attendees,
+                                    'course_max_attendees'=>$this->max_attendees,
+                                    'course_status'=>$this->status
+                                ),$this->table,'course_id',$this->id);
+            }
+            else
+            {
+                $db->insert(array('course_title'=>$this->title,
+                                    'course_description'=>$this->description,
+                                    'course_price'=>$this->price,
+                                    'course_min_attendees'=>$this->min_attendees,
+                                    'course_max_attendees'=>$this->max_attendees,
+                                    'course_status'=>$this->status
+                                ),$this->table);
+                $this->load_course_by_id($db->last_inserted_id);
+            }
+        }
+        else
+        {
+            throw new exception("Save not possible in View Mode");
+        }
+    }
+
+    function load_course($id)
+    {
+        $this->mode = ($id<200000 ? 'view' : 'edit' );
+        if($this->mode == 'edit')
+        {
+            $data = $this->db->sql_query_with_fetch("SELECT * FROM courses_edit WHERE course_id=:id",array('id'=>$id));
+            $this->id=$id;
+            $this->master_id=$data->course_master_id;
+            $this->title = $data->course_title;
+            $this->description = $data->course_description;
+            $this->text = $data->course_description;
+            $this->teacher_id = $data->course_user_id;
+            $this->min_attendees = $data->course_min_attendees;
+            $this->max_attendees = $data->course_max_attendees;
+            $this->status = $data->course_status; 
+        }
+        else
+        {
+            $data = $this->db->sql_query_with_fetch("SELECT * FROM courses WHERE course_id=:id",array('id'=>$id));
+            $this->id=$id;
+            $this->master_id=$id;
+            $this->title = $data->course_title;
+            $this->description = $data->course_description;
+            $this->text = $data->course_description;
+            $this->teacher_id = $data->course_user_id;
+            $this->min_attendees = $data->course_min_attendees;
+            $this->max_attendees = $data->course_max_attendees;
+            $this->db->sql_query("SELECT * FROM courses_edit WHERE course_master_id=:id AND course_status!=:status",array('id'=>$id,'status'=>'Released'));
+            if($this->db->count()>0) 
+            {
+                $d = $this->db->get_next_res(); 
+                $this->status = $d->course_status; 
+            }
+            else
+            {
+                $this->status = "Released"; 
+            }
+        }
+
     }
 
     function load_by_appointment_id($id)
@@ -73,14 +168,29 @@ class course
         if($this->num_attendees+1<$this->min_attendees) { $this->min_attendees_reached = false; } else {$this->min_attendees_reached = true; }
     }
 
-    function get_card()
+    function get_card_new()
     {
       $txt = "";
       $txt.= "<div class='col-sm-6 col-xl-4 my-2'>";
       $txt.= "  <div class='card'>";
       $txt.= "    <div class='card-body'>";
+      $txt.= "      <h5 class='card-title'>&nbsp;</h5>";
+      $txt.= "      <a href='?course_id=0' class='btn btn-success'><i class='bi bi-plus-circle me-2'></i>Kurs hinzufügen</a>";
+      $txt.= "    </div>";
+      $txt.= "  </div>";
+      $txt.= "</div>";
+      return $txt;
+    }
+    function get_card()
+    {
+      $txt = "";
+      $txt.= "<div class='col-sm-6 col-xl-4 my-2 d-flex'>";
+      $txt.= "  <div class='card'>";
+      $txt.= "    <div class='card-body'>";
       $txt.= "      <h5 class='card-title'>".$this->title."</h5>";
       $txt.= "      <p class='card-text'>".$this->text."</p>";
+      $txt.= "    </div>";
+      $txt.= "    <div class='card-footer'>";
       $txt.= "      <a href='".level."app_course_admin/course_details.php?id=".$this->id."' class='btn btn-primary'>Kurs anschauen</a>";
       $txt.= "    </div>";
       $txt.= "  </div>";
@@ -95,7 +205,8 @@ class course
       $txt.= "  <div class='card'>";
       $txt.= "    <div class='card-body'>";
       $txt.= "      <h5 class='card-title'>".$this->title."</h5>";
-      $txt.= "      <a href='?course_id=".$this->id."' class='btn btn-warning'>Kurs bearbeiten</a>";
+      $txt.= "      <a href='?course_id=".$this->id."' class='btn btn-warning'><i class='bi bi-pencil me-2'></i>Kurs bearbeiten</a>";
+      $txt.= "      <a href='?course_id=".$this->id."' class='btn btn-primary'><i class='bi bi-pencil me-2'></i>Termine</a>";
       $txt.= "    </div>";
       $txt.= "  </div>";
       $txt.= "</div>";
@@ -119,7 +230,6 @@ class course
                 </div>
                 </div>
         
-                <div class='container-lg'>
                     <div class='row'>
                         <div class='col-12 my-2'>
                             <h1>".$this->title."</h1>
@@ -146,7 +256,6 @@ class course
                         <div class='col my-2 d-flex align-items-center'>
                             <h2 class='text-secondary'>\"Fotografieren ist die schönste Sache der Welt\"</h2>
                         </div>
-                    </div>
                 </div>";
         return $txt;
     }

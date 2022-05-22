@@ -211,7 +211,6 @@ try
 
 			
 		if(!isset($_POST['old_password'])) { $_POST['old_password'] = ""; }
-		$myPage->add_content("<div class='container-lg'>");
 		$myPage->add_content_with_translation("<h3 class='my-3'>Meine Angaben</h3>");
 		if($message!='') { $myPage->add_content($myPage->show_info($myPage->t->translate($message))); }
 		if($error!='') { $myPage->add_content($myPage->show_error($myPage->t->translate($error))); }
@@ -338,7 +337,6 @@ try
 			</div>
 		  </div>
 		</div>
-	  </div>		
 								"); 
 		
 	}

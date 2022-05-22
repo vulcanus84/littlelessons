@@ -8,16 +8,14 @@ try
 	$myPage = new page();
 	$myPage->login_required=false;
 	$myPage->set_title("Little Lessons");
-	$myPage->add_content("<div class='container-lg my-4'>
-							<div class='row justify-content-start mp-5'>");
+	$myPage->add_content("<div class='row'>");
 	$db->sql_query("SELECT * FROM courses");
 	while($d = $db->get_next_res())
 	{
 		$myCourse = new course($d->course_id);
 		$myPage->add_content($myCourse->get_card());
 	}
-	$myPage->add_content("	</div>
-						  </div>");
+	$myPage->add_content("</div>");
 
 
 	print $myPage->get_html_code();

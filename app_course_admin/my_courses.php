@@ -12,153 +12,147 @@ try
 	if(isset($_SESSION['login_user']))
 	{
 		$message = ""; $error = "";
-		
-		$myPage->add_content_with_translation("<h3 class='my-3'>Meine Kurse</h3>");
+        $myPage->add_js("
+        function load_modal(course_id,typ)
+        {
+            $.ajax({
+                url : '".level."api.php',
+                data: {'request_typ':typ,'course_id':course_id},
+                type: 'GET',
+        
+                success: function(data){
+                    $('#modal_body').html(data);
+                }
+            });
+        }
+
+        function set_course_status(course_id,status)
+        {
+            $.ajax({
+                url : '".level."api.php',
+                data: {'request_typ':'set_course_status','course_id':course_id,'status':status},
+                type: 'GET',
+        
+                success: function(data){
+                    location.reload();
+                }
+            });
+        }
+        ");
+
 		if($message!='') { $myPage->add_content($myPage->show_info($myPage->t->translate($message))); }
 		if($error!='') { $myPage->add_content($myPage->show_error($myPage->t->translate($error))); }
 		if(isset($_GET['course_id']))
         {
+            $myPage->add_content("
+                                    <div class='modal fade' id='exampleModal' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+                                    <div class='modal-dialog'>
+                                        <div class='modal-content'>
+                                        <div class='modal-header'>
+                                            <h5 class='modal-title' id='exampleModalLabel'>Hinweis</h5>
+                                            <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Schliessen'></button>
+                                        </div>
+                                        <div class='modal-body' id='modal_body'>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    ");
+            //Add new course
+            if($_GET['course_id']==0)
+            {
+                $myCourse = new course();
+                $myCourse->save();    
+
+            }
             $myCourse = new course($_GET['course_id']);
-            $myPage->add_content("<div class='container-lg'>");
-            $myPage->add_content("<a href='my_courses.php' class='btn btn-primary '>Zurück</a>");
+            $myPage->add_content("<div class='container-lg'><div class='row'><a href='my_courses.php' class='btn btn-primary mb-1'>Zurück</a></div></div>");
+            $myPage->add_content("<h3 class='my-3'>".$myCourse->title."</h3>");
+            $myPage->add_content("<div class='container-lg'>
+            <div class='row my-3'>");
+            if($myCourse->status=='Edit')
+            {
+                $myPage->add_content("<div class='col-4 text-center py-2 bg-warning rounded-pill'>Bearbeitung</div>");
+                $myPage->add_content("<button data-bs-toggle='modal' data-bs-target='#exampleModal' onclick=\"load_modal(".$myCourse->id.",'approval_confirmation');\" class='btn col-4 text-center py-2 bg-light rounded-pill'>Prüfung</button>");
+                $myPage->add_content("<button data-bs-toggle='modal' data-bs-target='#exampleModal' onclick=\"load_modal(".$myCourse->id.",'abort_confirmation');\" class='btn col-4 text-center py-2 bg-danger rounded-pill'>Abbrechen</button>");
+            }
+            if($myCourse->status=='Approval')
+            {
+                $myPage->add_content("<div class='col-4 text-center py-2 bg-light rounded-pill'>Bearbeitung</div>");
+                $myPage->add_content("<div class='col-4 text-center py-2 bg-warning rounded-pill'>Prüfung</div>");
+                $myPage->add_content("<div class='col-4 text-center py-2 bg-light rounded-pill'>Freigabe</div>");
+            }
+            if($myCourse->status=='Released')
+            {
+                $myPage->add_content("<button onclick=\"set_course_status('".$myCourse->id."','Edit');\" class='btn col-4 text-center py-2 bg-light rounded-pill'>Bearbeiten</button>");
+                $myPage->add_content("<div class='col-4 text-center py-2 bg-light rounded-pill'>Prüfung</div>");
+                $myPage->add_content("<div class='col-4 text-center py-2 bg-success rounded-pill'>Freigabe</div>");
+            }
+
 
             $myPage->add_content("
-            <div class='accordion mt-3' id='accordionExample'>
-            <div class='accordion-item'>
-            <h2 class='accordion-header' id='headingFour'>
-                <button class='accordion-button' type='button' data-bs-toggle='collapse' data-bs-target='#collapseFour' aria-expanded='false' aria-controls='collapseFour'>
-            ");
-$myPage->add_content_with_translation("Beschreibung");
-$myPage->add_content("
-                    </button>
-                </h2>
-                <div id='collapseFour' class='accordion-collapse collapse show' aria-labelledby='headingFour' data-bs-parent='#accordionExample'>
-                    <div class='accordion-body'>
-                    ");
-$myPage->add_content("<form id='personals' action='".$page->change_parameter('action','save_personals')."' method='POST' >");
+            </div>
+            </div>");
+            if($myCourse->status=='Released')
+            {
+                $myPage->add_content("<p>Der Kurs ist aktuell nicht in Bearbeitung. Klicken sie auf bearbeiten um den Kurs zu editieren</p>");
+            }
 
-$myPage->add_content("      <div class='form-floating mb-3'>");
-$myPage->add_content("        <input type='text' class='form-control' id='title' name='title' value='".$myCourse->title."' required>");
-$myPage->add_content("        <label for='title'>Titel</label>");
-$myPage->add_content("      </div>");
-$myPage->add_content("      <div  class='form-floating mb-3'>");
-$myPage->add_content("        <textarea class='form-control' id='description' name='description' style='height:300px;' required>".$myCourse->description."</textarea>");
-$myPage->add_content("      </div>");
-$myPage->add_content("      <div class='form-floating mb-3'>");
-$myPage->add_content("        <input type='email' class='form-control' id='email' name='email' value='".$_SESSION['login_user']->email."' required>");
-$myPage->add_content("        <label for='email' class='form-label'>E-Mail Adresse</label>");
-$myPage->add_content("      </div>");
-$myPage->add_content_with_translation("<button onclick='this.submit();' class='btn btn-primary'>Speichern</button></td>");
-$myPage->add_content("</form>");
-            
+            if($myCourse->status=='Approval')
+            {
+                $myPage->add_content("Der Kurs wird aktuell geprüft und sie können keine Änderungen vornehmen.");
+            }
 
-$myPage->add_content("
-</div>
-</div>
-</div>
-                <div class='accordion-item'>
-            <h2 class='accordion-header' id='headingOne'>
-                <button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapseOne' aria-expanded='true' aria-controls='collapseOne'>
-        ");
-$myPage->add_content_with_translation("Bild wechseln");
-$myPage->add_content("
-                </button>
-            </h2>
-            <div id='collapseOne' class='accordion-collapse collapse' aria-labelledby='headingOne' data-bs-parent='#accordionExample'>
-                <div class='accordion-body'>
-        ");
-$myPage->add_content("<form id='new_user' action='".$page->change_parameter('action','change_pic')."' method='post' enctype='multipart/form-data'>");
-$myPage->add_content("<input type='hidden' id='user_id' name='user_id' value='".$_SESSION['login_user']->id."' />");
-$myPage->add_content($_SESSION['login_user']->get_picture(null,'upload_pic','150px',false));
-$myPage->add_content("<input style='visibility:hidden;' onchange='$(\"#new_user\").submit();' name='pictures[]' id='inpPicture' type='file' accept='image/*'/>");
-$myPage->add_content("</form>");
-$myPage->add_content_with_translation("<a class='btn btn-primary mt-3' onclick='upload_pic();' role='button'>Bild wechseln</a>");
-$myPage->add_content_with_translation("<a class='btn btn-warning mt-3' href='?action=delete_pic' role='button'>Bild löschen</a>");
 
-$myPage->add_content("
-        </div>
-        </div>
-        </div>
-        <div class='accordion-item'>
-        <h2 class='accordion-header' id='headingTwo'>
-            <button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapseTwo' aria-expanded='false' aria-controls='collapseTwo'>
-        ");
-$myPage->add_content_with_translation("Passwort");
-$myPage->add_content("
-                </button>
-            </h2>
-            <div id='collapseTwo' class='accordion-collapse collapse' aria-labelledby='headingTwo' data-bs-parent='#accordionExample'>
-                <div class='accordion-body'>
-                ");
-$myPage->add_content("<form id='change_password' action='".$page->change_parameter('action','change_password')."' method='POST' oninput='new_password.setCustomValidity(new_password_repeat.value != new_password.value ? \"Passwörter sind nicht identisch.\" : \"\")'>");
+            if($myCourse->status=='Edit')
+            {
+                $myPage->add_content("      <form id='personals' action='".$page->change_parameter('action','save_personals')."' method='POST' >");
+                $myPage->add_content("          <div class='form-floating mb-3'>");
+                $myPage->add_content("          <input type='text' class='form-control' id='title' name='title' value='".$myCourse->title."' required>");
+                $myPage->add_content("          <label for='title'>Titel</label>");
+                $myPage->add_content("          </div>");
+                $myPage->add_content("          <div  class='form-floating mb-3'>");
+                $myPage->add_content("              <textarea class='form-control' id='description' name='description' style='height:300px;' required>".$myCourse->description."</textarea>");
+                $myPage->add_content("          </div>");
+                $myPage->add_content_with_translation("<button onclick='this.submit();' class='btn btn-primary'>Speichern</button></td>");
+                $myPage->add_content("      </form>");
+                
+    
+                $myPage->add_content("<form id='new_user' action='".$page->change_parameter('action','change_pic')."' method='post' enctype='multipart/form-data'>");
+                $myPage->add_content("<input type='hidden' id='user_id' name='user_id' value='".$_SESSION['login_user']->id."' />");
+                $myPage->add_content($_SESSION['login_user']->get_picture(null,'upload_pic','150px',false));
+                $myPage->add_content("<input style='visibility:hidden;' onchange='$(\"#new_user\").submit();' name='pictures[]' id='inpPicture' type='file' accept='image/*'/>");
+                $myPage->add_content("</form>");
+                $myPage->add_content_with_translation("<a class='btn btn-primary mt-3' onclick='upload_pic();' role='button'>Bild wechseln</a>");
+                $myPage->add_content_with_translation("<a class='btn btn-warning mt-3' href='?action=delete_pic' role='button'>Bild löschen</a>");
+    
+                $myPage->add_content("
+                
+                                        <script>
+                                            CKEDITOR.replace('description');
+                                            CKEDITOR.config.removePlugins = 'elementspath';
+                                            CKEDITOR.config.resize_enabled = false;
+                                        </script>
+                                        ");    
+            }
 
-$myPage->add_content("      <div class='form-floating mb-3'>");
-$myPage->add_content("        <input type='password' class='form-control' id='old_password' name='old_password' required>");
-$myPage->add_content("        <label for='old_password' class='form-label'>Altes Passwort</label>");
-$myPage->add_content("      </div>");
-$myPage->add_content("      <div class='form-floating mb-3'>");
-$myPage->add_content("        <input type='password' class='form-control' id='new_password' name='new_password' required>");
-$myPage->add_content("        <label for='new_password' class='form-label'>Neues Passwort</label>");
-$myPage->add_content("      </div>");
-$myPage->add_content("      <div class='form-floating mb-3'>");
-$myPage->add_content("        <input type='password' class='form-control' id='new_password_repeat' name='new_password_repeat' required>");
-$myPage->add_content("        <label for='new_password_repeat' class='form-label'>Neues Passwort wiederholen</label>");
-$myPage->add_content("      </div>");
-$myPage->add_content_with_translation("<button onclick='this.submit();' class='btn btn-primary'>Passwort wechseln</button></td>");
-$myPage->add_content("</form>");
-        
-
-$myPage->add_content("
-</div>
-</div>
-</div>
-<div class='accordion-item'>
-<h2 class='accordion-header' id='headingThree'>
-<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapseThree' aria-expanded='false' aria-controls='collapseThree'>");
-$myPage->add_content_with_translation("Sprache");
-$myPage->add_content("
-</button>
-</h2>
-<div id='collapseThree' class='accordion-collapse collapse' aria-labelledby='headingThree' data-bs-parent='#accordionExample'>
-<div class='accordion-body'>");
-$myPage->add_content("<table><tr>");
-$page->reset();
-$page->remove_parameter('action');
-$page->change_parameter('change_language','german');
-$txt = "<a href='".$page->get_link()."'><img style='"; if($_SESSION['login_user']->get_frontend_language()=='german') { $txt.= ';background-color:#AAA;padding:5px;border-radius:5px;'; }; $txt.="' src='".level."inc/imgs/flags/Germany.png' alt='Deutsch' title='Deutsch'/></a>";
-$myPage->add_content("<td>$txt</td>");
-$page->change_parameter('change_language','english');
-$txt = "<a href='".$page->get_link()."'><img style='"; if($_SESSION['login_user']->get_frontend_language()=='english') { $txt.= ';background-color:#AAA;padding:5px;border-radius:5px;'; }; $txt.="' src='".level."inc/imgs/flags/United Kingdom(Great Britain).png' alt='English' title='English'/></a>";
-$myPage->add_content("<td>$txt</td>");
-$myPage->add_content("</tr></table>");
-
-$myPage->add_content("
-</div>
-</div>
-</div>
-</div>		
-            "); 
-
-            $myPage->add_content("
-<script>
-    CKEDITOR.replace('description');
-    CKEDITOR.config.removePlugins = 'elementspath';
-    CKEDITOR.config.resize_enabled = false;
-</script>
-
-");    
 
 
             $myPage->add_content("</div>");
         }
         else
         {
+            $myPage->add_content_with_translation("<h3 class='my-3'>Meine Kurse</h3>");
+            $myPage->add_content("<div class='row justify-content-start'>");
             $db->sql_query("SELECT * FROM courses WHERE course_user_id='".$_SESSION['login_user']->id."'");
             while($d = $db->get_next_res())
             {
                 $myCourse = new course($d->course_id);
                 $myPage->add_content($myCourse->get_card_edit());
             }
+            $myCourse = new course();
+            $myPage->add_content($myCourse->get_card_new());
+            $myPage->add_content("</div>");
 
         }
 	}
