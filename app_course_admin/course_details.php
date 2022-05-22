@@ -20,7 +20,7 @@ try
         function load_modal(appointment_id)
         {
             $.ajax({
-                url : 'api.php',
+                url : '".level."api.php',
                 data: {'request_typ':'booking_confirmation','appointment_id':appointment_id},
                 type: 'GET',
         
@@ -44,10 +44,10 @@ try
         if(isset($_SESSION['login_user']))
         {
             $myPage->add_js("
-            function book_course(appointment_id)
+            function book_appointment(appointment_id)
             {
                 $.ajax({
-                    url : 'api.php',
+                    url : '".level."api.php',
                     data: {'request_typ':'book_appointment','appointment_id':appointment_id,'user_id':".$_SESSION['login_user']->id."},
                     type: 'GET',
             

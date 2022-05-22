@@ -327,13 +327,13 @@ class course
         {
             $txt = "Mit dieser Bestätigung buchen sie den Kurs <b>".$this->title."</b> am ".$this->date." von ".$this->start_time." - ".$this->end_time." Uhr definitiv.<p/>
             <br/>Sie erhalten vom Kursleiter dann noch eine Bestätigung und ev. weitere Informationen<hr/>";
-            $txt.= "<button type='button' class='btn btn-primary' onclick=\"book_course(".$this->appointment_id.");\">Kurs definitiv buchen</button>";
+            $txt.= "<button type='button' class='btn btn-primary' onclick=\"book_appointment(".$this->appointment_id.");\">Kurs definitiv buchen</button>";
         }
         else
         {
             $txt = "Mit dieser Bestätigung buchen sie den Kurs <b>".$this->title."</b> am ".$this->date." von ".$this->start_time." - ".$this->end_time." Uhr definitiv.<p/>
             <br/>Aktuell sind noch zu wenige Teilnehmer angemeldet. Sie werden informiert, falls der Kurs abgesagt werden muss.<hr/>";
-            $txt.= "<button type='button' class='btn btn-primary' onclick=\"book_course(".$this->appointment_id.");\">Kurs definitiv buchen</button>";
+            $txt.= "<button type='button' class='btn btn-primary' onclick=\"book_appointment(".$this->appointment_id.");\">Kurs definitiv buchen</button>";
         }
         return $txt;
     }
