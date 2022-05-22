@@ -158,7 +158,7 @@ class course
                                                 SELECT MAX(appointment2user_appointment_id) as x, COUNT(*) as num_attendees FROM appointment2user GROUP BY appointment2user_appointment_id
                                             ) as count_apps ON appointments.appointment_id = count_apps.x
                                             WHERE appointment_id=:id",array('id'=>$id));
-        $this->load_by_course_id($data->course_id);
+        $this->load_course($data->course_id);
 
         $this->appointment_id=$id;
         $this->date = $data->start_d;
