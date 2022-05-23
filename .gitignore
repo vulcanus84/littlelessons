@@ -1,6 +1,6 @@
 node_modules
 uploads
-course_pics
-user_pics
+media/course_pics/*
+media/user_pics/*
 .DS_Store
 Test
