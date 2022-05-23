@@ -24,8 +24,8 @@ try
 
 		if(isset($_GET['action']) && $_GET['action']=='delete_pic')
 		{
-			$pic_path = level."app_user_admin/user_pics/".$_SESSION['login_user']->id.".png";
-			$pic_path_t = level."app_user_admin/user_pics/".$_SESSION['login_user']->id."_t.png";
+			$pic_path = level."media/user_pics/".$_SESSION['login_user']->id.".png";
+			$pic_path_t = level."media/user_pics/".$_SESSION['login_user']->id."_t.png";
 			if(file_exists($pic_path)) { unlink($pic_path); }
 			if(file_exists($pic_path_t)) { unlink($pic_path_t); }
 			header('Location: '.$page->filename);
@@ -33,7 +33,7 @@ try
 
 		if(isset($_GET['action']) && $_GET['action']=='change_pic')
 		{
-			$folder = 'app_user_admin/user_pics/';
+			$folder = 'media/user_pics/';
 			$user_id = $_SESSION['login_user']->id;
 			foreach ($_FILES["pictures"]["error"] as $key => $error) {
 			    if ($error == UPLOAD_ERR_OK) {
@@ -164,7 +164,7 @@ try
 							//output, save and free memory
 							imagepng($image,$folder.$user_id.'_t.png');
 	
-					    $filename_new = 'app_user_admin/uploads/'.microtime().$name;
+					    $filename_new = 'media/uploads/'.microtime().$name;
 					    rename($folder.$name, $filename_new);
 	
 							imagedestroy($image);

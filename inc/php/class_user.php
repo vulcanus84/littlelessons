@@ -64,7 +64,7 @@ class user
 		$myMail->add_recipient($this->id);
 		$myMail->set_title("E-Mail Bestätigung");
 		$myMail->add_text("bitte bestätige die E-Mail Adresse mit dem folgenden Link:<br/>");
-		$myMail->add_text("<a href='https://www.clanic.ch/littlelessons/app_user_admin/verify.php?verification_code=".$this->verification_code."'>https://www.clanic.ch/littlelessons/app_user_admin/verify.php?verification_code=".$this->verification_code."</a>");
+		$myMail->add_text("<a href='https://www.clanic.ch/littlelessons/media/verify.php?verification_code=".$this->verification_code."'>https://www.clanic.ch/littlelessons/media/verify.php?verification_code=".$this->verification_code."</a>");
 		$myMail->send_mail();
 	}
 
@@ -133,7 +133,7 @@ class user
 			$this->gender = $res->user_gender;
 
 			$this->set_frontend_language($res->user_language);
-			$this->image_path = "app_user_admin/pics/".$this->login.".jpg";
+			$this->image_path = "media/pics/".$this->login.".jpg";
     	}
     	else
 		{
@@ -222,33 +222,15 @@ class user
 		}
 	}
 
-	function get_ori_pic_path($thumbnail=false)
-	{
-		if($thumbnail)
-		{
-			$pic_path = level."app_user_admin/user_pics/".$this->id."_t.png";
-		}
-		else
-		{
-			$pic_path = level."app_user_admin/user_pics/".$this->id.".png";
-		}
-		if(!file_exists($pic_path))
-		{
-			if($this->gender=='Herr') { $pic_path = level.'inc/imgs/default_man.png'; } else { $pic_path = level.'inc/imgs/default_woman.png'; }
-		}
-
-		return $pic_path;
-	}
-
 	function get_pic_path($thumbnail=false)
 	{
 		if($thumbnail)
 		{
-			$pic_path = level."app_user_admin/user_pics/".$this->id."_t.png";
+			$pic_path = level."media/user_pics/".$this->id."_t.png";
 		}
 		else
 		{
-			$pic_path = level."app_user_admin/user_pics/".$this->id.".png";
+			$pic_path = level."media/user_pics/".$this->id.".png";
 		}
 
 		if(!file_exists($pic_path))

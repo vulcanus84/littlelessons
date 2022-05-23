@@ -268,13 +268,13 @@ class course
 
     public function get_course_pic()
     {
-        if(file_exists(level."app_course_admin/course_pics/".$this->id.".jpg"))
+        if(file_exists(level."media/course_pics/".$this->id.".jpg"))
         {
-            return "<img class='img-fluid rounded-3' src='".level."app_course_admin/course_pics/".$this->id.".jpg' alt='".$this->title."' title='".$this->title."'/>";
+            return "<img class='img-fluid rounded-3' src='".level."media/course_pics/".$this->id.".jpg' alt='".$this->title."' title='".$this->title."'/>";
         }
-        if(file_exists(level."app_course_admin/course_pics/".$this->id.".png"))
+        if(file_exists(level."media/course_pics/".$this->id.".png"))
         {
-            return "<img class='img-fluid rounded-3' src='".level."app_course_admin/course_pics/".$this->id.".png' alt='".$this->title."' title='".$this->title."'/>";
+            return "<img class='img-fluid rounded-3' src='".level."media/course_pics/".$this->id.".png' alt='".$this->title."' title='".$this->title."'/>";
         }
     }
 
@@ -300,7 +300,7 @@ class course
             {
                 if($this->min_attendees_reached) { $class = 'btn-success'; } else { $class = 'btn-warning'; }
                 $txt.= "
-                <button id='appointment".$this->appointment_id."' type='button' class='btn ".$class."' data-bs-toggle='modal' data-bs-target='#exampleModal' onclick=\"load_modal(".$d->appointment_id.");\">
+                <button id='appointment".$this->appointment_id."' type='button' class='btn ".$class."' data-bs-toggle='modal' data-bs-target='#exampleModal' onclick=\"load('modal_body',{'request_typ':'booking_confirmation','appointment_id':'".$d->appointment_id."'});\">
                     Kurs buchen <br/>(".$txt_free_places.")
                 </button>";
             }

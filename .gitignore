@@ -1,6 +1,3 @@
-node_modules
-uploads
-media/course_pics/*
-media/user_pics/*
+/node_modules
+/media
 .DS_Store
-Test
