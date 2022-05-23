@@ -33,7 +33,7 @@ try
 
 		if(isset($_GET['action']) && $_GET['action']=='change_pic')
 		{
-			$folder = 'media/user_pics/';
+			$folder = level.'media/user_pics/';
 			$user_id = $_SESSION['login_user']->id;
 			foreach ($_FILES["pictures"]["error"] as $key => $error) {
 			    if ($error == UPLOAD_ERR_OK) {
